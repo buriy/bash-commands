@@ -1,0 +1,13 @@
+#!/bin/sh
+#if [ ! -e ~/bin/"$1" ]; then
+if [[ -z ~/bin/$1 ]]; then
+updated="Added"
+else
+updated="Updated"
+fi;
+mcedit ~/bin/"$1"
+chmod ugo+x ~/bin/"$1"
+cd ~/bin
+git add "$1"
+git commit "$1" -m "$updated command '$1'"
+#fi
