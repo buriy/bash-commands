@@ -1,0 +1,2 @@
+#!/bin/bash
+mate $(git ls-files -u | cut -c51- | sort -u)
