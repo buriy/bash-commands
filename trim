@@ -1,0 +1,2 @@
+perl -pe "s/\s+\n/\n/" $1 > /tmp/trim
+cp /tmp/trim $1
