@@ -1,0 +1,3 @@
+#!/bin/bash
+ssh $1 "mkdir ~/bin"
+scp ~/bin/$2 $1:~/bin/
