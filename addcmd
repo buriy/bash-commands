@@ -1,9 +1,9 @@
 #!/bin/bash
-if [[ -z ~/bin/$1 ]]; then updated="Added"; else updated="Updated"; fi;
-if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;
-$EDITOR ~/bin/"$1"
-chmod ugo+x ~/bin/"$1"
 cd ~/bin
+if [[ -z $1 ]]; then updated="Added"; else updated="Updated"; fi;
+if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;
+$EDITOR "$1"
+chmod ugo+x "$1"
 git add "$1"
 git commit "$1" -m "$updated command '$1'"
 #fi
