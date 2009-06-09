@@ -1,2 +1,2 @@
-rm ~/bin/$1
+rm ~/bin/$1 2>/dev/null && "Removed"
 git rm --cached $1
