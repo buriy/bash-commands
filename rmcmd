@@ -1,2 +1,2 @@
 cd ~/bin
-rm ~/bin/$1 2>/dev/null && git rm $1
+rm ~/bin/$1 2>/dev/null && git rm $1 && git commit $1 -m "Removed command '$1'"
