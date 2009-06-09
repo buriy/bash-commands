@@ -1,3 +1,3 @@
 #!/bin/sh
 if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;
-sudo $EDITOR "$%"
+sudo $EDITOR "$*"
