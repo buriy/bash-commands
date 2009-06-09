@@ -5,7 +5,7 @@ updated="Added"
 else
 updated="Updated"
 fi;
-mcedit ~/bin/"$1"
+$EDITOR ~/bin/"$1"
 chmod ugo+x ~/bin/"$1"
 cd ~/bin
 git add "$1"
