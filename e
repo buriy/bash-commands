@@ -1,1 +1,3 @@
-mcedit $1
+#!/bin/sh
+if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;                                                                                           
+$EDITOR "$%"                                                                                                                     
