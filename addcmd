@@ -1,6 +1,8 @@
 #!/bin/sh
 if [[ -z ~/bin/$1 ]]; then updated="Added"; else updated="Updated"; fi;
+echo $EDITOR;
 if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;
+echo $EDITOR;
 $EDITOR ~/bin/"$1"
 chmod ugo+x ~/bin/"$1"
 cd ~/bin
