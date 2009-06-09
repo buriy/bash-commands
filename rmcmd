@@ -1,2 +1,3 @@
-rm ~/bin/$1 2>/dev/null && "Removed"
-git rm --cached ~/bin/$1
+cd ~/bin
+rm ~/bin/$1 2>/dev/null && echo "Removed"
+git rm $1
