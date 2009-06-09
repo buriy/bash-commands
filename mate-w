@@ -1,1 +1,2 @@
-mate -w %*
+#!/bin/sh
+mate -w "%*"
