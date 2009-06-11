@@ -5,6 +5,6 @@ if [[ ! $target ]]; then
     exit 1;
 fi;
 shift
-ssh $target "mkdir ~/bin"
+ssh $target "mkdir ~/bin 2>/dev/null"
 cd ~/bin
 scp $* $target:~/bin/
