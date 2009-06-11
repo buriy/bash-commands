@@ -1,7 +1,7 @@
 #!/bin/sh
 cd ~/bin
 if [[ $2 ]]; then
-    git commit "$*" -m "Updated commands: $*"
+    git commit $* -m "Updated commands: $*"
 else 
     git commit "$1" -m "Updated command '$1'"
 fi
