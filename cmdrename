@@ -1,12 +1,13 @@
 #!/bin/sh
 cd ~/bin
-if [[ -e $2 ]]; then
+if [[ -e "$2" ]]; then
     echo "Target file exists."
     exit 0;
 fi;
-if [[ $1 == $2 || -e $2 ]]; then
+if [[ "$1" == "$2" || -e "$2" ]]; then
     echo "Usage: cmdrename currentname newname"
     exit 0;
 fi;
-mv $1 $2
+mv "$1" "$2"
+git add "$2"
 git commit "$1" "$2" -m "Renamed command '$1' to '$2'" 
