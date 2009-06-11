@@ -1,8 +1,14 @@
 #!/bin/bash
-cmd=shift;
-stdout=$1.stdout.log
-stderr=$1.stderr.log
-$2 %* 1>$stdout 2>$stderr
+if [[ !$1 ]]; then
+    echo "Usage: cronrun logfile command [arguments]"
+    exit 1;
+fi;
+name=`echo $1 | sed s/.log$//g`
+stdout=$name.log
+stderr=$name.err.log
+echo "Running: $* 1>$stdout 2>$stderr"
+shift
+$* 1>$stdout 2>$stderr
 if [[ ! -z $stderr ]]; then
     echo "Cronrun finished with an exception!"
     echo "Errors:"
