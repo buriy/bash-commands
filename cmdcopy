@@ -1,0 +1,9 @@
+#!/bin/bash
+target=shift
+if [[ ! $target ]]; then 
+    echo "Usage: cmdpush target command1 [command2 ... ]"
+    exit 1;
+fi;
+ssh $target "mkdir ~/bin"
+cd ~/bin
+scp $* $target:~/bin/
