@@ -1,0 +1,10 @@
+#!/bin/bash
+target=$1
+if [[ ! $target ]]; then 
+    echo "Usage: cmdpull target command1 [command2 ... ]"
+    exit 1;
+fi;
+shift
+ssh $target "mkdir ~/bin 2>/dev/null"
+cd ~/bin
+scp $target:~/bin/$1 ~/bin
