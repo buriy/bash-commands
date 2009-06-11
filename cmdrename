@@ -9,4 +9,4 @@ if [[ $1 == $2 || -e $2 ]]; then
     exit 0;
 fi;
 mv $1 $2
-git commit $1 $2 -m "Renamed command '$1' to '$2'" 
+git commit "$1" "$2" -m "Renamed command '$1' to '$2'" 
