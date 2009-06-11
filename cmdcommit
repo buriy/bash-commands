@@ -1,0 +1,1 @@
+git commit "$1" -m "Updated command '$1'"
