@@ -1,16 +1,15 @@
 #!/bin/bash
 cmd=shift;
-source=shift;
-stdout=$2.stdout.log
-stderr=$2.stderr.log
-$1 $2 %* 1>$stdout 2>$stderr
+stdout=$1.stdout.log
+stderr=$1.stderr.log
+$2 %* 1>$stdout 2>$stderr
 if [[ ! -z $stderr ]]; then
-    echo "Failed on cronrun:"
-    echo "stderrors:"
+    echo "Cronrun finished with an exception!"
+    echo "Errors:"
     cat $stderr
-    echo "stdoutput:"
+    echo "Output:"
     cat $stdout
-elif [[ `grep "Traceback.*most recent call last" $stdout
+elif [[ `grep $stdout "Traceback.*most recent call last $stdout"` ]]; then 
     echo "Crashed on cronrun:"
     cat $stdout
 fi;
