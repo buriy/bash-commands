@@ -1,0 +1,8 @@
+#!/bin/sh
+cd ~/bin
+if [[ $1 == $2 && ! -e $2 ]];
+    echo "Usage: cmdrename currentname newname"
+    exit 0;
+fi;
+#mv $1 $2
+#rm
