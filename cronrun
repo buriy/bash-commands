@@ -1,21 +1,21 @@
 #!/bin/bash
-if [[ !$1 ]]; then
+if [[ ! $1 ]]; then
     echo "Usage: cronrun logfile command [arguments]"
     exit 1;
 fi;
 name=`echo $1 | sed s/.log$//g`
 stdout=$name.log
 stderr=$name.err.log
-echo "Running: $* 1>$stdout 2>$stderr"
+#echo "Running: $* 1>$stdout 2>$stderr"
 shift
 $* 1>$stdout 2>$stderr
-if [[ ! -z $stderr ]]; then
+if [[ -s $stderr ]]; then
     echo "Cronrun finished with an exception!"
     echo "Errors:"
     cat $stderr
     echo "Output:"
     cat $stdout
-elif [[ `grep $stdout "Traceback.*most recent call last $stdout"` ]]; then 
+elif [[ `grep "Traceback.*most recent call last" $stdout` ]]; then 
     echo "Crashed on cronrun:"
     cat $stdout
 fi;
