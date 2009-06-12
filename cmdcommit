@@ -1,4 +1,8 @@
 #!/bin/sh
+if [[ ! $1 ]]; then
+    echo "Usage: cmdcommit command1 [command2 ...]"
+    exit 0;
+fi;
 cd ~/bin
 if [[ $2 ]]; then
     git commit $* -m "Updated commands: $*"
