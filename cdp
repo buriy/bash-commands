@@ -1,2 +1,2 @@
 cd /Projects/$1
-c
+ls -ApGH
