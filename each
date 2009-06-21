@@ -1,0 +1,5 @@
+#!/bin/sh
+key=$1;
+val=$2;
+shift 2;
+find . -$key "$val" -print0 | xargs -0 -n 1 "$*"
