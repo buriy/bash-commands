@@ -1,4 +1,4 @@
 #!/bin/sh
 name=$1;
 shift;
-find . -name "$name" -print0 | xargs -0 -n 1 "$*"
+each -name "$name" "$*"
