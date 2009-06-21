@@ -1,4 +1,5 @@
 #!/bin/sh
 name=$1;
 shift;
+echo "each -name "$name" $*"
 each -name "$name" $*
