@@ -1,2 +1,7 @@
-perl -pe "s/\s+\n/\n/" $1 > /tmp/trim
-cp /tmp/trim $1
+#!/bin/bash
+if [[ $1 ]]; then
+    perl -pe "s/\s+\n/\n/" $1 > /tmp/trim
+    cp /tmp/trim $1
+else
+    perl -pe "s/\s+\n/\n/"
+fi;
