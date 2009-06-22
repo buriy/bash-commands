@@ -8,6 +8,13 @@ function raise {
 }
 
 if ! [[ $1 ]]; then raise 1 "Usage: django script.py [arg1] [arg2] ..."; fi;
+echo "$*" >> ~/bin/django-pydev.log
+if [[ $1 == '-u' ]]; then
+    # run standard module
+    python $*
+    exit 0;
+fi;
+
 if ! [[ -f $1 ]]; then raise 2 "File '$1' not found"; fi;
 
 DIR=`dirname $1`;
