@@ -8,11 +8,10 @@ function raise {
 }
 
 if ! [[ $1 ]]; then raise 1 "Usage: django script.py [arg1] [arg2] ..."; fi;
-echo "$*" >> ~/bin/django.log
-echo "$1" >> ~/bin/django-1.log
+echo "$@" >> ~/bin/django.log
 if [[ $1 == "-u" ]]; then
     # run standard module
-    python $*
+    python "$@"
     exit;
 fi;
 
@@ -35,4 +34,4 @@ if ! [[ $SETTINGS ]]; then raise 3 "No settings.py found! Can't set pythonpath! 
 export DJANGO_SETTINGS_MODULE=settings
 export PYTHONPATH=$SETTINGS
 
-python $*
+python "$@"
