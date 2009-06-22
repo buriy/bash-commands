@@ -1,1 +1,1 @@
-cmdadd $*
+cmdadd "$@"

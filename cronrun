@@ -8,7 +8,7 @@ stdout=$name.log
 stderr=$name.err.log
 #echo "Running: $* 1>$stdout 2>$stderr"
 shift
-$* 1>$stdout 2>$stderr
+"$@" 1>$stdout 2>$stderr
 if [[ -s $stderr ]]; then
     echo "Cronrun finished with an exception!"
     echo "Errors:"

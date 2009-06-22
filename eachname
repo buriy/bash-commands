@@ -1,4 +1,4 @@
 #!/bin/sh
 name=$1;
 shift;
-each -name "$name" $*
+each -name "$name" "$@"
