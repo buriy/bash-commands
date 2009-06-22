@@ -1,4 +1,5 @@
 #!/bin/bash
 if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;
-sudo $EDITOR "$@"
-`which $1`
+cmd=$1
+shift;
+$EDITOR `which $cmd` "$@"
