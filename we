@@ -1,1 +1,4 @@
-mcedit `which $1`
+#!/bin/bash
+if [[ ! $EDITOR ]]; then EDITOR=mcedit; fi;
+sudo $EDITOR "$@"
+`which $1`
