@@ -4,19 +4,29 @@
 #Expects that settings.py file is located in the project root dir.
 
 function raise {
-    tput setaf 1; tput bold; echo $2; tput sgr0; exit $1;
+    if [[ $TERM ]]; then
+        tput setaf 1; tput bold; echo $2; tput sgr0; exit $1;
+    else
+	echo $2; exit $1;
+    fi;
 }
 
-if ! [[ $1 ]]; then raise 1 "Usage: django script.py [arg1] [arg2] ..."; fi;
-if [[ $1 == "-u" ]]; then
-    # run standard module
-    python "$@"
-    exit;
+#echo "$@" >> ~/bin/django.log
+
+if ! [[ $1 ]]; then raise 1 "Usage: django [-u] script.py [arg1] [arg2] ..."; fi;
+
+script=$1
+if [[ $1 == "-u" ]]; then script=$2; fi;
+
+# run standard module
+if [[ $script =~ "/PySrc/interpreterInfo.py" ]]; then # hack for pydev interpreters
+    cat "$1" | sed "s#import sys#import sys; sys.executable='$0'#" | cat > /tmp/django-pydev.py
+    python -u "/tmp/django-pydev.py"
 fi;
 
-if ! [[ -f $1 ]]; then raise 2 "File '$1' not found"; fi;
+if ! [[ -f $script ]]; then raise 2 "File '$script' not found"; fi;
 
-DIR=`dirname $1`;
+DIR=`dirname $script`;
 DIR=`pwd $DIR`;
 cd $DIR
 
