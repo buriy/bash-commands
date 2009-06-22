@@ -1,0 +1,38 @@
+#!/bin/bash
+#Bash command to run django batch scripts from pydev.
+#It differs from django.sh in that it doesn't quit when settings weren't found.
+#I put it into my ~/bin/ directory under name "django" and call as simple "django script.py arg1".
+#Expects that settings.py file is located in the project root dir.
+
+function raise {
+    tput setaf 1; tput bold; echo $2; tput sgr0; exit $1;
+}
+
+if ! [[ $1 ]]; then raise 1 "Usage: django script.py [arg1] [arg2] ..."; fi;
+echo "$*" >> ~/bin/django-pydev.log
+if [[ $1 == '-u' ]]; then
+    # run standard module
+    python $*
+    exit 0;
+fi;
+
+if ! [[ -f $1 ]]; then raise 2 "File '$1' not found"; fi;
+DIR=`dirname $1`;
+DIR=`pwd $DIR`;
+cd $DIR
+
+SETTINGS=$DIR;
+while ! [[ -f "$SETTINGS/settings.py" ]]; do
+    if [[ $SETTINGS == "/" || $SETTINGS == "" ]]; then
+        SETTINGS="";
+        break;
+    fi; 
+    SETTINGS=`dirname $SETTINGS`;
+done;
+
+if [[ $SETTINGS ]]; then
+    export DJANGO_SETTINGS_MODULE=settings
+    export PYTHONPATH=$SETTINGS
+fi;
+
+python $*
