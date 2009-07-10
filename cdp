@@ -3,9 +3,9 @@ ROOT='/var'
 if [[ `ls /Projects/` ]]; then ROOT="/Projects"; fi
 PROJECT=$1
 if [[ ! $1 ]]; then
-    ls -ApH -d $ROOT/*/* | grep "/$" | cut -d "/" -f 3-
+    ls -ApGH -d $ROOT/*/*/ $ROOT/*/
 else
-    CHOICES=`ls -d $ROOT/$1 $ROOT/*/$1 2>/dev/null | head -n 1`
+    CHOICES=`ls -d $ROOT/$1/ $ROOT/*/$1/ 2>/dev/null | head -n 1`
     echo "Directory is now $CHOICES"
     cd $CHOICES
     ls -ApGH
