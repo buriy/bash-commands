@@ -2,7 +2,7 @@
 ROOT='/var'
 if [[ `ls /Projects/` ]]; then ROOT="/Projects"; fi
 PROJECT=$1
-if [ ! $1 ]; then
+if [[ ! $1 ]]; then
     ls -ApGH -d $ROOT/*/* | grep "/$" | cut -d "/" -f 4;
 else
     CHOICES=`ls -d $ROOT/* $ROOT/*/$1 2>/dev/null`
