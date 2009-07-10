@@ -3,7 +3,7 @@ ROOT='/var'
 if [[ `ls /Projects/` ]]; then ROOT="/Projects"; fi
 PROJECT=$1
 if [ ! $1 ]; then
-    ls -d $ROOT/*/* | cut -d "/" -f 4;
+    ls -ApGH -d $ROOT/*/* | cut -d "/" -f 4;
 else
     CHOICES=`ls -d $ROOT/*/$1`
     echo "Directory is now $CHOICES"
