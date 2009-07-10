@@ -1,5 +1,5 @@
 #!/bin/bash
-LSCOLOR = "--color"
+LSCOLOR="--color"
 if [[ `uname` == 'Darwin' ]]; then LSCOLOR="-G"; fi
 ROOT='/var'
 if [[ `ls /Projects/ 2>/dev/null` ]]; then ROOT="/Projects"; fi
