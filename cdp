@@ -1,6 +1,6 @@
 #!/bin/bash
 ROOT='/var'
-if [[ `ls /Projects/` ]]; then ROOT="/Projects"; fi
+if [[ `ls /Projects/ 2>/dev/null` ]]; then ROOT="/Projects"; fi
 PROJECT=$1
 if [[ ! $1 ]]; then
     ls -AGH -d $ROOT/*/*/ $ROOT/*/
