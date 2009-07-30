@@ -1,0 +1,2 @@
+#!/bin/bash
+each-dir -maxdepth 1 -mindepth 1 "$@"
