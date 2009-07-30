@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# A bit better syntax for find
+# A better syntax for find
 #
 #   each -name "*.pyc" -do rm 
 # will be translated to:
@@ -15,4 +15,8 @@ while [[ "z$1" != "z-do" && "$1" != "" ]]; do
     shift;
 done;
 shift; # skip this -do
-find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
+if [ "$1" != "" ] ; then
+    find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
+else;
+    find . "${args[@]}" -print0
+fi;
