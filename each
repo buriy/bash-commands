@@ -4,19 +4,27 @@
 #
 #   each -name "*.pyc" -do rm 
 # will be translated to:
-#   find . -name "*.pyc" -exec rm {} \;
-# or that also can be written as
 #   find . -name "*.pyc" -print0 | xargs -0 -n 1 rm
+# or that also often can be written as
+#   find . -name "*.pyc" -exec rm {} \;
+#
+# and
+#   each -name "*.pyc" -run cd {}; git gc; cd ..;
+# will be translated to:
+#   find . -name "*.pyc" -print0 | xargs -0 -n 1 -J {} (cd {}; git gc; cd ..)
 
 i=0;
-while [[ "z$1" != "z-do" && "$1" != "" ]]; do
+while [[ "z$1" != "z-do" && "z$1" != "z-run" && "$1" != "" ]]; do
     args[$i]=$1;
     i=$(expr $i + 1);
     shift;
 done;
-shift; # skip this -do
-if [ "$1" != "" ] ; then
+if [ "$1" == "-do" ] ; then
+    shift; # skip this -do
     find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
+elif [ "$1" == "-run" ] ; then
+    shift; # skip this -run
+    find . "${args[@]}" -print0 | xargs -0 -n 1 -J {} ( "$@" )
 else;
     find . "${args[@]}" -print0
 fi;
