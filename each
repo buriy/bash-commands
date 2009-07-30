@@ -1,9 +1,18 @@
 #!/bin/sh
+
+# A bit better syntax for find
+#
+#   each -name "*.pyc" -do rm 
+# will be translated to:
+#   find . -name "*.pyc" -exec rm {} \;
+# or that also can be written as
+#   find . -name "*.pyc" -print0 | xargs -0 -n 1 rm
+
 i=0;
-while [[ "z$1" != "z-do" ]]; do
+while [[ "z$1" != "z-do" -a "$1" != "" ]]; do
     args[$i]=$1;
     i=$(expr $i + 1);
     shift;
 done;
-shift; # remove this -do
+shift; # skip this -do
 find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
