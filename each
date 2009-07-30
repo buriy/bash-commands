@@ -1,15 +1,9 @@
 #!/bin/sh
 i=0;
-i=0
-while [[ "z$1" == z-* ]]; do
+while [[ "z$1" != "z-do" ]]; do
     args[$i]=$1;
     i=$(expr $i + 1);
-    if [[ "$1"!="-depth" -a "$1"!="-print" -a "$1"!="-ok" -a "$1"!="-ls" ]]; then
-        # if command requires argument
-        args[$i]=$2;
-        i=$(expr $i + 1);
-        shift;
-    fi;
     shift;
 done;
-find . "${args[@]}" -print0 | xargs -0 -n 1 echo
+shift; # remove this -do
+find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
