@@ -24,7 +24,8 @@ if [ "$1" == "-do" ] ; then
     find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
 elif [ "$1" == "-run" ] ; then
     shift; # skip this -run
-    find . "${args[@]}" -print0 | xargs -0 -n 1 -J {} ( "$@" )
+    $AFS='\0';
+    for $i in `find . "${args[@]}" -print0`; do $@; done;
 else;
     find . "${args[@]}" -print0
 fi;
