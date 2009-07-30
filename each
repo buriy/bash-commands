@@ -9,7 +9,7 @@
 #   find . -name "*.pyc" -print0 | xargs -0 -n 1 rm
 
 i=0;
-while [[ "z$1" != "z-do" -a "$1" != "" ]]; do
+while [[ "z$1" != "z-do" && "$1" != "" ]]; do
     args[$i]=$1;
     i=$(expr $i + 1);
     shift;
