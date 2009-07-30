@@ -11,7 +11,7 @@
 # and
 #   each -name "*.pyc" -run cd {}; git gc; cd ..;
 # will be translated to:
-#   find . -name "*.pyc" -print0 | xargs -0 -n 1 -J {} (cd {}; git gc; cd ..)
+#   find . -name "*.pyc" -print0 | xargs -0 -n 1 -J {} "$@"
 
 i=0;
 while [[ "z$1" != "z-do" && "z$1" != "z-run" && "$1" != "" ]]; do
@@ -24,8 +24,8 @@ if [ "$1" == "-do" ] ; then
     find . "${args[@]}" -print0 | xargs -0 -n 1 "$@"
 elif [ "$1" == "-run" ] ; then
     shift; # skip this -run
-    $AFS='\0';
-    for $i in `find . "${args[@]}" -print0`; do $@; done;
-else;
+    IFS='\0';
+    find . "${args[@]}" -print0 | xargs -0 -n 1 -J {} "$@"
+else
     find . "${args[@]}" -print0
 fi;
