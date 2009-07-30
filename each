@@ -1,11 +1,14 @@
 #!/bin/sh
 i=0;
-declare -a args
+i=0
 while [[ "z$1" == z-* ]]; do
     args[$i]=$1;
     i=$(expr $i + 1);
-    args[$i]=$2;
-    i=$(expr $i + 1);
-    shift 2;
+    if [[ ! "$1" in ( "-depth" "-print" "-ok" "-ls" ) ]]; then # if command requires argument
+        args[$i]=$2;
+        i=$(expr $i + 1);
+        shift;
+    fi;
+    shift;
 done;
 find . "${args[@]}" -print0 | xargs -0 -n 1 echo
