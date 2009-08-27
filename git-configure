@@ -1,0 +1,1 @@
+git config --add branch.master.merge master
