@@ -1,1 +1,2 @@
+git config --add branch.master.remote origin
 git config --add branch.master.merge master
