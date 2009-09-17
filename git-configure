@@ -1,2 +1,3 @@
-git config --add branch.master.remote origin
-git config --add branch.master.merge master
+git config branch.master.remote origin
+git config branch.master.merge master
+git config push.default tracking
