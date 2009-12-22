@@ -1,0 +1,291 @@
+#!/usr/bin/perl
+
+# watchfile:
+# This script prints info about changes to the file(s) specified
+# as command-line arguments.
+
+# Options:
+# By default, the script checks on the file(s) every 10 seconds.
+# If you want to specify a different time interval, use the "-interval" option. 
+# By default, the script does not report on access-time changes.
+# If you want to be notified of access-time changes, use the "-atime" option
+# If you want the script to calculate and compare an MD5 digest for each file,
+# use the "-md5" option. This requires the Perl module Digest::MD5
+# which is not installed by default. Note that access-time changes will not
+# be reported if the "-md5" option is used since the file is accessed
+# in order to compute the MD5 digest.
+# By default, the script does not report on resource-fork changes.
+# If you want to be notified of resource-fork changes, use the "-rsrc" option.
+# If you want the script to make a beep when there is a change,
+# use the "-beep" option.
+
+# Copyright 2006, Cameron Hayne.  All Rights Reserved.  
+# This program is free software.  You may copy or
+# redistribute it under the same terms as Perl itself.
+#
+# Created: September 2003  Cameron Hayne (macdev@hayne.net)
+# Modified: February 2006 to support resource forks
+
+use strict;
+use warnings;
+use File::stat;
+use Fcntl;
+
+# function declarations
+sub usage_error();
+sub handle_command_line_options();
+sub print_msg($$$);
+sub get_file_info($);
+sub determine_changes($$);
+sub calc_md5($);
+
+# global variables
+my $interval = 10;    # time (in seconds) between checks
+my $report_atime = 0; # whether to report on access time changes
+my $report_rsrc = 0;  # whether to report on resource forks as well
+my $want_md5 = 0;     # whether an md5 digest is to be computed for each file
+my $want_beep = 0;    # whether to make a beep when reporting changes
+my @filenames;        # names of files to be watched
+
+
+$| = 1; # enable autoflushing of output so this works better when piped
+handle_command_line_options();
+
+MAIN:
+{
+    my %fileinfo; # file info hashed by filename
+
+    foreach my $filename (@filenames)
+    {
+        my $info = get_file_info($filename);
+        $fileinfo{$filename} = $info;
+        if ($info->{seen})
+        {
+            print_msg($filename, $info, "Stored info");
+        }
+        else
+        {
+            print_msg($filename, $info, "Non-existent");
+        }
+    }
+    print "------------------------------------------------\n";
+    
+    while (1)
+    {
+        my $changes = 0;
+        foreach my $filename (@filenames)
+        {
+            my $prev_info = $fileinfo{$filename};
+            my $info = get_file_info($filename);
+            my $mods = determine_changes($prev_info, $info);
+            if ($mods)
+            {
+                print_msg($filename, $info, "Changed: $mods");
+                $changes += 1;
+            }
+            $fileinfo{$filename} = $info;
+        }
+        
+        if ($want_beep && $changes > 0)
+        {
+            print "\a"; # make a beep
+        }
+        
+        sleep $interval;
+    }
+}
+
+
+#----- FUNCTIONS -----
+
+sub usage_error()
+{
+    my $options = "[-interval n] [-atime] [-md5] [-rsrc] [-beep]";
+    print STDERR "usage: watchfile $options filename(s)\n";
+    exit(1);
+}
+
+sub handle_command_line_options()
+{
+    use Getopt::Long;
+
+    GetOptions(
+                'interval=i'    => \$interval,
+                'atime'         => \$report_atime,
+                'md5'           => \$want_md5,
+                'rsrc'          => \$report_rsrc,
+                'beep'          => \$want_beep,
+                ) or usage_error();
+
+    usage_error() unless scalar(@ARGV) >= 1; # must give a filename
+    @filenames = @ARGV;
+
+    # check validity of option values
+    die "interval must be positive\n" if $interval <= 0;
+
+    if ($want_md5)
+    {
+        # check that the MD5 module is installed
+        unless (eval "require Digest::MD5")
+        {
+            warn "Couldn't load Digest::MD5 - md5 digests will not be used\n";
+            $want_md5 = 0;
+        }
+
+        # Calculating the MD5 digest accesses the file
+        # so there is no point in reporting on atime
+        $report_atime = 0 if $want_md5;
+
+        # doing MD5 of directories is not supported
+        foreach my $file (@filenames)
+        {
+            if (-d $file)
+            {
+                warn "MD5 of directories is not supported\n";
+                last; # give the warning only once
+            }
+        }
+    }
+}
+
+sub print_msg($$$)
+{
+    my ($filename, $info, $msg) = @_;
+
+    my $date = localtime(time());
+
+    print "$date: $filename: $msg\n";
+    if ($info->{seen}) # file exists
+    {
+        system("/bin/ls -ld \"$filename\"");
+        if ($report_rsrc && $info->{rsrc}->size > 0)
+        {
+            my $rsrc_filename = "$filename/..namedfork/rsrc";
+            system("/bin/ls -ld \"$rsrc_filename\"");
+        }
+    }
+}
+
+sub get_file_info($)
+{
+    my ($filename) = @_;
+
+    my $info;
+
+    if (-e $filename) # check that the file exists
+    {
+        $info->{seen} = 1;
+        
+        $info->{data} = stat($filename)
+            or die "Can't stat file $filename: $!";
+        if ($want_md5)
+        {
+            $info->{data_md5} = calc_md5($filename);
+        }
+        
+        if ($report_rsrc)
+        {
+            my $rsrc_filename = "$filename/..namedfork/rsrc";
+            $info->{rsrc} = stat($rsrc_filename)
+                    or die "Can't stat file $rsrc_filename: $!";
+            if ($want_md5)
+            {
+                $info->{rsrc_md5} = calc_md5($rsrc_filename);
+            }
+        }
+    }
+    else # file doesn't exist
+    {
+        $info->{seen} = 0;
+        $info->{data} = undef;
+        $info->{rsrc} = undef;
+    }
+    
+    return $info;
+}
+
+# returns a string specifying what changed
+sub determine_changes($$)
+{
+    my ($prev_info, $info) = @_;
+    
+    return 0 unless defined($prev_info);
+    return 0 if ($prev_info->{seen} == 0 and $info->{seen} == 0);
+    
+    my $mods = "";
+    my $newly_created = ($prev_info->{seen} == 0 and $info->{seen} == 1);
+    my $newly_deleted = ($prev_info->{seen} == 1 and $info->{seen} == 0);
+    if ($newly_created)
+    {
+        $mods .= "file created";
+    }
+    elsif ($newly_deleted)
+    {
+        $mods .= "file deleted";
+    }
+
+    my $prev_data = $prev_info->{data};
+    my $data = $info->{data};
+    if (defined($prev_data) and defined($data))
+    {
+        # see 'man stat' for the meaning of these fields
+        $mods .= "ino "   if ($data->ino != $prev_data->ino);
+        $mods .= "mode "  if ($data->mode != $prev_data->mode);
+        $mods .= "nlink " if ($data->nlink != $prev_data->nlink);
+        $mods .= "uid "   if ($data->uid != $prev_data->uid);
+        $mods .= "gid "   if ($data->gid != $prev_data->gid);
+        $mods .= "size "  if ($data->size != $prev_data->size);
+        if ($want_md5)
+        {
+            my $prev_data_md5 = $prev_info->{data_md5};
+            my $data_md5 = $info->{data_md5};
+            $mods .= "md5 " if ($data_md5 ne $prev_data_md5);
+        }
+        if ($report_atime)
+        {
+            $mods .= "atime " if ($data->atime != $prev_data->atime);
+        }
+        $mods .= "mtime " if ($data->mtime != $prev_data->mtime);
+        $mods .= "ctime " if ($data->ctime != $prev_data->ctime);
+    }
+
+    my $prev_rsrc = $prev_info->{rsrc};
+    my $rsrc = $info->{rsrc};
+    if (defined($prev_rsrc) and defined($rsrc))
+    {
+        $mods .= "rsrc-size "  if ($rsrc->size != $prev_rsrc->size);
+        if ($want_md5)
+        {
+            my $prev_rsrc_md5 = $prev_info->{rsrc_md5};
+            my $rsrc_md5 = $info->{rsrc_md5};
+            $mods .= "rsrc-md5 " if ($rsrc_md5 ne $prev_rsrc_md5);
+        }
+    }
+    
+    return $mods;
+}
+
+sub calc_md5($)
+{
+    my ($filename) = @_;
+
+    if (-d $filename)
+    {
+        # doing MD5 on a directory is not supported
+        return "unsupported"; # we need to return something
+    }
+
+    # We use 'sysopen' instead of just 'open' in order to be able to handle
+    # filenames with leading whitespace or leading "-"
+    # The usual trick to protect against leading whitespace or "-" is to do
+    # $filename =~ s#^(\s)#./$1#; open(FILE, "< $filename\0")
+    # but that fails if the filename is something like "- foo"
+    # (i.e. if there is an initial "-" followed by whitespace)
+
+    sysopen(FILE, $filename, O_RDONLY) 
+         or die "Unable to open file \"$filename\": $!\n";
+    binmode(FILE); # just in case we're on Windows!
+    my $md5 = Digest::MD5->new->addfile(*FILE)->hexdigest;
+    close(FILE);
+    return $md5;
+}
