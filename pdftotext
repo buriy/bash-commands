@@ -1,2 +1,2 @@
 #!/bin/bash
-pdf2txt.py $1
+pdf2txt.py "$1"
