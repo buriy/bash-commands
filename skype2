@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo su - dashenka -c "nohup /Applications/Skype.app/Contents/MacOS/Skype "
+exit
