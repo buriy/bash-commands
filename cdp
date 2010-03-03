@@ -6,7 +6,7 @@ if [[ `ls /Projects/ 2>/dev/null` ]]; then ROOT="/Projects"; fi
 PROJECT=$1
 if [[ ! $1 ]]; then
     echo "Available projects:"
-    ls -AH $LSCOLOR -d $ROOT/*/*/ $ROOT/*/
+    ls -AH $LSCOLOR -d $ROOT/*/ $ROOT/*/*/
 else
     CHOICES=`ls -d $ROOT/$1/ $ROOT/*/$1/ 2>/dev/null | head -n 1`
     echo "Directory is now $CHOICES"
