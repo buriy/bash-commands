@@ -1,1 +1,1 @@
-sudo kill -HUP `cat /usr/local/nginx/logs/nginx.pid`
+sudo kill -HUP `cat /usr/local/var/run/nginx/nginx.pid`
