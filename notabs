@@ -1,0 +1,5 @@
+#!/bin/sh
+tab=8
+if [ -n "$2" ]; then tab=$1; shift; fi
+expand -t $tab "$1" > /tmp/notabs
+cp /tmp/notabs "$1"
