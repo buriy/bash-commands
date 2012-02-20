@@ -1,0 +1,4 @@
+sudo /etc/init.d/lighttpd stop
+sudo killall -9 lighttpd
+sudo pgrep -f "python /var/django/" | xargs sudo kill -9
+sudo /etc/init.d/lighttpd start

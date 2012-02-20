@@ -1,0 +1,5 @@
+#!/bin/bash
+sudo chgrp -R devel $1
+sudo chmod -R g+rw $1
+find $1 -type d -print0 | xargs -0 sudo chmod g+s
+
