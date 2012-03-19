@@ -1,5 +1,6 @@
 cd ~/bin
 for a in "$@"; do
     scp -i ~/.ssh/id_rsa4 ~/.ssh/id_rsa.wn.pub $a:~/.ssh/authorized_keys
+    scp ~/{.bashrc,.bash_profile,.aliases} $a
     cmdpush $a *
 done
