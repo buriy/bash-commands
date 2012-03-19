@@ -1,0 +1,4 @@
+cd ~/bin
+for $a in "$@"; do
+    cmdpush * $a
+done
